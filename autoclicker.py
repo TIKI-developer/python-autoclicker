@@ -53,12 +53,15 @@ def divide_line_segment(p1, p2, interval):
 
 def clear_targets():
     targets.clear()
+    print("Cleared targets")
+
 
 def pause():
     global isPaused, start_time
     isPaused = True
     start_time = time.time()
     print("[Paused]")
+
 
 def resume():
     global isPaused, start_time
@@ -101,12 +104,14 @@ def change_mode():
         mode = "s"
         print("Mode set to smart")
 
+
 def set_next_target_with_smart_mode():
     global isSmartModeClickFirst, p1, p2
 
     if isSmartModeClickFirst:
         p1 = pyautogui.position()
         isSmartModeClickFirst = False
+        print("First point: " + str(p1))
         return
     else:
         p2 = pyautogui.position()
@@ -114,30 +119,38 @@ def set_next_target_with_smart_mode():
         points = divide_line_segment(p1, p2, interval)
         targets.extend(points)
         isSmartModeClickFirst = True
+        print("Second point: " + str(p2))
+        print("Added targets " + str(len(points)))
+
 
 def set_next_target():
     pos = pyautogui.position()
-    print("Added target with position: " + str(pos))
     targets.append(pos)
+    print("Added target with position: " + str(pos))
     return
 
 
 def display_controls():
-    print("// AutoClicker by iSayChris")
     print("// - Settings: ")
     print("\t delay = " + str(delay) + 'ec' + '\n')
     print("\t duration = " + str(duration) + 'ec' + '\n')
     print("// - Controls:")
     print("\t F1 = Resume")
     print("\t F2 = Pause")
-    print("\t F3 = Exit")
+    print("\t Esc = Exit")
+    print("\t Right Arrow = Next Position")
+    print("\t Left Arrow = Clear Targets")
+    print("\t Down Arrow = Setup")
+    print("\t Up Arrow = Change Target Set Mode")
     print("-----------------------------------------------------")
     print('Press F1 to start...')
+
 
 def setup():
     global delay, duration
     delay = float(input("Enter delay: "))
     duration = float(input("Enter duration or 0 to infinity clicks: "))
+
 
 def main():
     global isPaused, delay, duration, start_time
@@ -157,8 +170,9 @@ def main():
     while running:
         if not isPaused:
             for target in targets:
-                pyautogui.click(target)
-                pyautogui.PAUSE = delay
+                if not isPaused:
+                    pyautogui.click(target)
+                    pyautogui.PAUSE = delay
             if time.time() - start_time >= duration and not isInfinite:
                 pause()
     lis.stop()
